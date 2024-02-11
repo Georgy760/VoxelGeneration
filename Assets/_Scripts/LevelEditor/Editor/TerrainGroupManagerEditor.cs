@@ -1,15 +1,13 @@
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
+using System.Collections.Generic;
 
 namespace HexDiff.LevelEditor
 {
     [CustomEditor(typeof(TerrainGroupManager))]
     public class TerrainGroupManagerEditor : Editor
     {
-        private int selectedResolutionIndex = 0;
         private string[] resolutionOptions;
-
         void OnEnable()
         {
             // Get the resolution keys from the TerrainManager's Resolution dictionary
@@ -17,24 +15,33 @@ namespace HexDiff.LevelEditor
             List<string> resolutionKeys = new List<string>(terrainManager.Resolution.Keys);
             resolutionOptions = resolutionKeys.ToArray();
         }
+
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
             TerrainGroupManager myTarget = (TerrainGroupManager)target;
-            selectedResolutionIndex = EditorGUILayout.Popup("Resolution", selectedResolutionIndex, resolutionOptions);
-            string selectedResolutionKey = resolutionOptions[selectedResolutionIndex];
-            Vector2Int selectedResolution = myTarget.Resolution[selectedResolutionKey];
+            myTarget.SelectedResolutionIndex = EditorGUILayout.Popup("Resolution", myTarget.SelectedResolutionIndex, resolutionOptions);
+            
+            string selectedResolutionKey = resolutionOptions[myTarget.SelectedResolutionIndex];
 
-            // Display the selected resolution
-            EditorGUILayout.LabelField("Selected Resolution", selectedResolution.x + "x" + selectedResolution.y);
+            EditorGUILayout.LabelField("Current resolution", myTarget.CurrentResolution);
 
-            if (GUILayout.Button("Test"))
+            if (GUILayout.Button("Group Terrains"))
             {
                 myTarget.FindTerrainsByGroupID(myTarget.GroupID);
             }
 
+            if (GUILayout.Button("Change Resolution"))
+            {
+                // Change the resolution of terrains
+                myTarget.ChangeTerrainsResolution(selectedResolutionKey);
+            }
 
+            if(GUILayout.Button("Generate heightmap")){
+                myTarget.GenerateGroupHeightmap();
+            }
         }
     }
+
 }
