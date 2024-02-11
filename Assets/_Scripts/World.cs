@@ -14,8 +14,12 @@ public class World : MonoBehaviour
     private Dictionary<Vector3Int, ChunkData> _chunkDataDictionary = new Dictionary<Vector3Int, ChunkData>();
     private Dictionary<Vector3Int, ChunkRenderer> _chunkDictionary = new Dictionary<Vector3Int, ChunkRenderer>();
     [SerializeField] private Texture2D heightMap;
-    [SerializeField] private int mapSizeInChunks = 16;
+    [SerializeField] private int mapSizeInChunks {get => heightMap.width / chunkSize;}
 
+    private void Start(){
+        Debug.Log($"HeightMap loaded: {heightMap.width}x {heightMap.height}\n" +
+        $"mapSizeInChunks: {mapSizeInChunks}");
+    }
     public void GenerateWorld()
     {
         _chunkDataDictionary.Clear();
